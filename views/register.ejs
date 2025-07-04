@@ -1,0 +1,199 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: url("/images/collegebg.jpg") no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Dark overlay for readability */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-form {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 1.75rem;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    max-width: 460px;
+    width: 100%;
+    color: #ffffff;
+    animation: fadeIn 0.8s ease-in-out;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+  }
+
+  .auth-form h2 {
+    text-align: center;
+    font-size: 1.9rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.4rem;
+  }
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #e6e6e6;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.95);
+    font-size: 1rem;
+    color: #222;
+    transition: 0.3s ease;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(145, 135, 255, 0.35);
+    border-color: #928dab;
+  }
+
+  input[type="file"] {
+    background-color: #fff;
+    font-size: 0.92rem;
+    padding: 0.65rem;
+  }
+
+  .btn {
+    background: linear-gradient(to right, #7f53ac, #647dee);
+    color: white;
+    border: none;
+    padding: 0.9rem 1.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(100, 125, 238, 0.4);
+    width: 100%;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+
+  .btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 14px 32px rgba(100, 125, 238, 0.6);
+  }
+
+  .form-group select {
+    appearance: none;
+    background: url('data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20"%3e%3cpath fill="%23333" d="M10 12l5-5h-10z"/%3e%3c/svg%3e') no-repeat right 1rem center;
+    background-size: 10px 6px;
+  }
+
+  .bottom-note {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #dcdcdc;
+  }
+
+  .bottom-note a {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+
+  .bottom-note a:hover {
+    color: #b2bfff;
+  }
+</style>
+
+
+<main>
+  <form action="/register" method="POST" enctype="multipart/form-data" class="auth-form">
+    <h2>Register to CampusConnect ✨</h2>
+
+    <div class="form-group">
+      <label for="role">I am a:</label>
+      <select id="role" name="role" required>
+        <option value="" disabled selected>Select your role</option>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" placeholder="Please use your college mail-id" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+    </div>
+
+    <div class="form-group">
+      <label for="photo">Profile Photo:</label>
+      <input type="file" id="photo" name="photo" accept="image/*">
+    </div>
+
+    <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Submit</button>
+
+    <div class="bottom-note">
+      Already registered? <a href="/login">Login here</a>
+    </div>
+  </form>
+</main>

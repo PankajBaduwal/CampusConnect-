@@ -1,0 +1,541 @@
+<% layout('layouts/boilerplate') %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            right: 15%;
+            animation-delay: -2s;
+        }
+
+        .shape-3 {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -4s;
+        }
+
+        .shape-4 {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            right: 25%;
+            animation-delay: -1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heading-gradient {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            border-radius: 1rem;
+            border: 2px solid #e9ecef;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+            background-color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-custom {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            border: 2px dashed #667eea;
+            border-radius: 1rem;
+            background: linear-gradient(45deg, #f8f9fa, #ffffff);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .file-input-custom:hover {
+            border-color: #764ba2;
+            background: linear-gradient(45deg, #ffffff, #f8f9fa);
+            transform: translateY(-2px);
+        }
+
+        .file-input-custom input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-content {
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .file-input-icon {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-custom:hover .file-input-icon {
+            color: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .file-input-text {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-subtext {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .radio-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-card {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .radio-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #dee2e6;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-card .radio-icon {
+            border-color: #667eea;
+            background: #667eea;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-card .radio-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .radio-text {
+            flex: 1;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .btn-post {
+            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .btn-post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-post:hover::before {
+            left: 100%;
+        }
+
+        .btn-post:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-post:active {
+            transform: translateY(-1px);
+        }
+
+        .form-text {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .post-card {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .heading-gradient {
+                font-size: 2rem;
+            }
+
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Image preview styles */
+        .image-preview {
+            margin-top: 1rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-preview-controls {
+            padding: 1rem;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .remove-image {
+            color: #dc3545;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .remove-image:hover {
+            color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-decoration">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="post-card mx-auto" style="max-width: 700px;">
+            <h2 class="heading-gradient">
+                <i class="fas fa-camera-retro"></i>
+                Share Your Moment
+            </h2>
+            <p class="subtitle">
+                <i class="fas fa-globe"></i>
+                Let the world know what you're up to ✨
+            </p>
+
+<form action="/posts/<%= user._id %>/new" method="POST" enctype="multipart/form-data">            
+      <div class="form-group">
+                    <label for="caption" class="form-label">
+                        <i class="fas fa-pen-fancy"></i>
+                        Caption
+                    </label>
+                    <input type="text" name="caption" id="caption" class="form-control" 
+                           placeholder="Write something interesting..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="image" class="form-label">
+                        <i class="fas fa-image"></i>
+                        Upload Image
+                    </label>
+                    <div class="file-input-wrapper">
+                        <div class="file-input-custom">
+                            <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
+                            <div class="file-input-content">
+                                <i class="fas fa-cloud-upload-alt file-input-icon"></i>
+                                <div class="file-input-text">Click to upload or drag and drop</div>
+                                <div class="file-input-subtext">JPG, PNG, GIF up to 10MB</div>
+                            </div>
+                        </div>
+                        <div class="image-preview" id="imagePreview">
+                            <img id="previewImg" src="" alt="Preview">
+                            <div class="image-preview-controls">
+                                <span class="file-name" id="fileName"></span>
+                                <span class="remove-image" onclick="removeImage()">
+                                    <i class="fas fa-times"></i> Remove
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user-circle"></i>
+                        Post as
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+<input type="radio" name="postAs" id="postAsUser" value="User" checked>
+                            <div class="radio-card">
+                                <div class="radio-icon"></div>
+                                <div class="radio-text">
+                                    <strong>Your Username</strong>
+                                    <div style="font-size: 0.9rem; color: #6c757d;">Show your identity</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="radio-option">
+<input type="radio" name="postAs" id="postAsAnonymous" value="Anonymous">         
+                   <div class="radio-card">
+                                <div class="radio-icon"></div>
+                                <div class="radio-text">
+                                    <strong>Anonymous</strong>
+                                    <div style="font-size: 0.9rem; color: #6c757d;">Stay mysterious</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-post">
+                        <i class="fas fa-rocket"></i>
+                        Post It!
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            document.getElementById('image').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate form elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'slideInUp 0.6s ease-out';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.form-group').forEach(group => {
+                observer.observe(group);
+            });
+
+            // Add floating animation to form on hover
+            const postCard = document.querySelector('.post-card');
+            postCard.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+
+            postCard.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>

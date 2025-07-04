@@ -1,0 +1,411 @@
+<% layout('layouts/boilerplate') %>
+   <style>
+/* Shared Gradient Theme */
+.bg-glass {
+  background: linear-gradient(135deg, #e0f7fa, #f9f9f9);
+}
+
+.bg-glass-green {
+  background: linear-gradient(135deg, #f0fff4, #ffffff);
+}
+
+/* Post Cards Glass Look */
+.post-card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-card-glass:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Glass Buttons */
+.glass-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgb(11, 10, 10);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: #000;
+  font-weight: 600;
+}
+
+/* Sidebar Background */
+.sexy-sidebar {
+  background: linear-gradient(135deg, #e0f7fa, #f9f9f9);
+  color: rgb(19, 19, 19);
+  border-top-right-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+}
+
+/* White Text Titles */
+.sexy-sidebar h5 {
+  color: #141212;
+}
+</style>
+<div class="container-fluid">
+  <div class="row">
+
+   <!-- Sexy Sidebar -->
+<aside class="col-lg-2 col-md-3 sexy-sidebar shadow-sm vh-100 px-3 pt-4 d-flex flex-column align-items-center">
+  <!-- Profile -->
+    <div class="text-center mb-4">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#userPhotoModal">
+      <img src="<%= user.photo || '/images/default-profile.png' %>" alt="User Profile"
+        class="rounded-circle shadow-lg user-image" width="80" height="80">
+    </a>
+    <h5 class="mt-3 fw-bold text-dark"><%= user.name %></h5>
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="userPhotoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <img src="<%= user.photo || '/images/default-profile.png' %>" alt="User Profile"
+            class="img-fluid rounded">
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- User Stats -->
+  <div class="bg-white text-dark rounded-pill px-3 py-1 mb-3 small fw-semibold shadow-sm">
+    <i class="fas fa-users me-1"></i> Followers: <%= user.followers || 0 %>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <ul class="nav flex-column gap-3 w-100">
+    <li>
+      <form action="/posts/<%= user._id %>/new" method="get">
+        <button class="btn glass-button w-100">➕ Create Post</button>
+      </form>
+    </li>
+    <li>
+      <form action="/polls/<%= user._id %>/new" method="get">
+        <button class="btn glass-button w-100">📊 Create Poll</button>
+      </form>
+    </li>
+    <li>
+      <form action="/posts/<%= user._id %>/mypost" method="get">
+        <button class="btn glass-button w-100">📝 My Posts</button>
+      </form>
+    </li>
+    <li>
+      <form action="/users/<%= user._id %>/favourites" method="get">
+        <button class="btn glass-button w-100">❤️ Favourites</button>
+      </form>
+    </li>
+    <li>
+      <form action="/logout" method="get">
+        <button class="btn glass-button w-100">🚪 Log Out</button>
+      </form>
+    </li>
+    <li>
+      <form action="/users/<%= user._id %>?_method=DELETE" method="POST"
+        onsubmit="return confirm('Delete your account?')">
+        <button class="btn btn-danger w-100 shadow-sm">🗑️ Delete Account</button>
+      </form>
+    </li>
+  </ul>
+</aside>
+
+
+  <main class="col-lg-7 col-md-6 py-4 px-4">
+  <h2 class="text-center mb-4 border-bottom pb-2 fw-bold text-dark">📣 Latest Posts</h2>
+  <div class="d-flex flex-column gap-4">
+    <% for (let item of combined) { %>
+    <div class="card shadow-sm border-0 post-card-glass">
+      <% if (item.type === 'post') { %>
+        <img src="<%= item.image %>" class="card-img-top rounded-top" alt="Post Image" style="object-fit: cover; height: 200px;">
+        <div class="card-body">
+          <h5 class="card-title fw-bold text-primary"><%= item.caption %></h5>
+          <p class="text-dark mb-1">👤 <%= item.authorName || 'Anonymous' %></p>
+          <p class="text-dark small">🕒 <%= item.createdAt.toDateString() %></p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <form action="/posts/<%= item._id %>/<%= user._id %>/upvote" method="POST">
+              <button class="btn btn-success btn-sm" type="submit">👍 <%= item.upvotes %></button>
+            </form>
+            <form action="/posts/<%= item._id %>/<%= user._id %>/downvote" method="POST">
+              <button class="btn btn-danger btn-sm" type="submit">👎 <%= item.downvotes %></button>
+            </form>
+            <form action="/users/<%= user._id %>/favourites/<%= item._id %>" method="POST">
+              <button class="btn btn-warning btn-sm" type="submit">⭐ Favourite</button>
+            </form>
+            <% if (String(item.authorId) !== String(user._id)) { %>
+              <form action="/users/<%= user._id %>/follow/<%= item.authorId %>" method="POST">
+                <button class="btn btn-primary btn-sm" type="submit">➕ Follow</button>
+              </form>
+            <% } %>
+          </div>
+
+          <button class="btn btn-outline-secondary btn-sm mt-2" onclick="toggleComments('<%= item._id %>')">💬 Show Comments</button>
+
+          <div id="comments-container-<%= item._id %>" class="d-none mt-2">
+            <% if (item.comments && item.comments.length > 0) { %>
+              <ul class="list-group">
+                <% item.comments.forEach(comment => { %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong><%= comment.author || 'Anonymous' %>:</strong>
+                      <%= comment.text %>
+                      <span class="text-muted small">🕒 <%= comment.createdAt ? comment.createdAt.toDateString() : '' %></span>
+                    </div>
+                    <div>
+                      <form action="/posts/<%= item._id %>/comments/<%= comment._id %>/react/<%= user._id %>" method="POST" class="d-inline">
+                        <button class="btn btn-sm btn-outline-success" type="submit" name="emoji" value="like">👍 <%= comment.reactions?.[0]?.like || 0 %></button>
+                        <button class="btn btn-sm btn-outline-danger" type="submit" name="emoji" value="love">❤️ <%= comment.reactions?.[0]?.love || 0 %></button>
+                        <button class="btn btn-sm btn-outline-warning" type="submit" name="emoji" value="laugh">😂 <%= comment.reactions?.[0]?.laugh || 0 %></button>
+                        <button class="btn btn-sm btn-outline-info" type="submit" name="emoji" value="wow">😮 <%= comment.reactions?.[0]?.wow || 0 %></button>
+                      </form>
+                    </div>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <div class="text-muted mt-2">No comments yet.</div>
+            <% } %>
+            <button class="btn btn-outline-primary btn-sm mt-2" onclick="toggleCommentForm('<%= item._id %>')">📝 Add Comment</button>
+            <form action="/posts/<%= item._id %>/<%= user._id %>/comment" method="POST" class="d-none mt-2" id="comment-form-<%= item._id %>">
+              <textarea class="form-control" rows="2" name="text" placeholder="Write your comment..."></textarea>
+              <button class="btn btn-success btn-sm mt-2" type="submit">Post Comment</button>
+            </form>
+          </div>
+
+        </div>
+      <% } else if (item.type === 'poll') { %>
+        <div class="card-body">
+          <h5 class="text-primary fw-bold"><%= item.question %></h5>
+          <form action="/polls/<%= user._id %>/vote/<%= item._id %>" method="POST">
+            <% item.options.forEach((option, idx) => { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="vote" id="opt-<%= item._id %>-<%= idx %>" value="<%= option.text %>">
+                <label class="form-check-label" for="opt-<%= item._id %>-<%= idx %>">
+                  <%= option.text %> (<%= option.votes %>)
+                </label>
+              </div>
+            <% }) %>
+            <button class="btn btn-primary btn-sm mt-3" type="submit">Vote</button>
+          </form>
+          <p class="mt-3 text-muted small">
+            👤 <%= item.authorName || 'Anonymous' %> | 🕒 <%= item.createdAt.toDateString() %>
+          </p>
+        </div>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+</main>
+
+
+
+
+    <!-- News + Chatbot -->
+<aside class="col-lg-3 col-md-3 py-4 pe-4">
+
+  <!-- Campus News -->
+  <div class="rounded-4 p-4 shadow mb-4" style="background: linear-gradient(135deg, #e0f7fa, #f9f9f9); border: none;">
+    <h5 class="fw-bold mb-3 text-primary d-flex align-items-center">
+      <i class="fas fa-newspaper me-2"></i> Campus News 🗞️
+    </h5>
+    <div class="news-ticker bg-white rounded p-3 shadow-sm" style="height: 200px; overflow: hidden; position: relative;">
+      <div class="news-items" style="animation: scrollNews 15s linear infinite;">
+        <% const news = [
+          "🎉 10,000 users milestone!",
+          "📸 Share your best photo and win badges!",
+          "💬 Private messaging coming soon!",
+          "😀 React to comments with emojis!"
+        ]; news.forEach(text => { %>
+          <div class="mb-3 d-flex align-items-center text-dark fs-6">
+            <i class="fas fa-circle text-success me-2 fs-8"></i> <%= text %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Box -->
+  <div class="rounded-4 p-4 shadow" style="background: linear-gradient(135deg, #f0fff4, #ffffff); border: none;">
+    <h5 class="text-success fw-bold mb-3 d-flex align-items-center">
+      <i class="fas fa-robot me-2"></i> KPRIET Assistant 🤖
+    </h5>
+
+    <!-- Chat Body -->
+    <div id="chatbotBody" class="bg-white border rounded-3 p-3 mb-3 shadow-sm" style="height: 250px; overflow-y: auto;"></div>
+
+    <!-- Quick Buttons -->
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <% ["Library", "Hostel", "Events", "Placements", "Transport", "Contact"].forEach(q => { %>
+        <button class="btn btn-sm rounded-pill btn-outline-success px-3" 
+                onclick="sendQuickQuestion('What are the <%= q.toLowerCase() %> facilities?')">
+          💬 <%= q %>
+        </button>
+      <% }) %>
+    </div>
+
+    <!-- Input Form -->
+    <form id="chatbotForm" class="d-flex gap-2">
+      <input type="text" class="form-control rounded-pill" id="chatbotInput" placeholder="Ask a question...">
+      <button class="btn btn-success rounded-pill px-4" type="submit">Send</button>
+    </form>
+  </div>
+</aside>
+
+<style>
+  @keyframes scrollNews {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+
+  .news-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #chatbotBody {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .btn-outline-success:hover {
+    background-color: #d4fcd9;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    border-color: #198754;
+  }
+</style>
+
+<style>
+@keyframes scrollNews {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-100%); }
+}
+</style>
+
+
+<script>
+
+  function toggleComments(postId) {
+  const commentsContainer = document.getElementById(`comments-container-${postId}`);
+  commentsContainer.classList.toggle('d-none');
+}
+  // Store the current scroll position in localStorage before form submission
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get all forms
+    const forms = document.querySelectorAll('form');
+    
+    // Add event listener to each form
+    forms.forEach(form => {
+      form.addEventListener('submit', function() {
+        localStorage.setItem('scrollPosition', window.scrollY);
+      });
+    });
+    
+    // Restore scroll position when page loads
+    if (localStorage.getItem('scrollPosition')) {
+      window.scrollTo(0, localStorage.getItem('scrollPosition'));
+      // Optional: Clear the stored position after using it
+      // localStorage.removeItem('scrollPosition');
+    }
+  });
+
+  function toggleComments(postId) {
+    const commentsContainer = document.getElementById(`comments-container-${postId}`);
+    commentsContainer.classList.toggle('d-none');
+  }
+
+  function toggleCommentForm(postId) {
+    const form = document.getElementById(`comment-form-${postId}`);
+    form.classList.toggle('d-none');
+  }
+
+  function toggleEditForm(commentId) {
+    const form = document.getElementById(`edit-form-${commentId}`);
+    form.classList.toggle('d-none');
+  }
+
+  function toggleReplyForm(commentId) {
+    const form = document.getElementById(`reply-form-${commentId}`);
+    form.classList.toggle('d-none');
+  }
+
+  function toggleReplies(commentId) {
+    const replies = document.getElementById(`replies-${commentId}`);
+    replies.classList.toggle('d-none');
+  }
+  
+  // Pause news ticker animation on hover
+  document.querySelector('.news-ticker').addEventListener('mouseenter', function() {
+    document.querySelector('.news-items').style.animationPlayState = 'paused';
+  });
+  
+  document.querySelector('.news-ticker').addEventListener('mouseleave', function() {
+    document.querySelector('.news-items').style.animationPlayState = 'running';
+  });
+
+  const chatbotForm = document.getElementById('chatbotForm');
+  const chatbotInput = document.getElementById('chatbotInput');
+  const chatbotBody = document.getElementById('chatbotBody');
+
+  const responses = {
+    "timetable": "📅 You can find your timetable on the student portal based on your department and year.",
+    "library": "📚 The library is located in the main academic block. It’s open from 8 AM to 8 PM on weekdays.",
+    "canteen": "🍽️ The canteen offers hygienic South Indian meals and snacks from 8 AM to 6 PM.",
+    "event": "🎉 Our upcoming event is *Tech Carnival 2025*! Check the Events page for more details.",
+    "hod": "👨‍🏫 Your HoD is available from 10 AM to 12 PM on weekdays. Please visit your department.",
+    "placement": "🎯 Our placement cell collaborates with top companies. Check out recent stats on the placement page!",
+    "hostel": "🏠 Hostels for both boys and girls are available with Wi-Fi, mess, and 24/7 security.",
+    "transport": "🚌 Buses are available across Coimbatore and nearby towns. Visit the transport section for routes.",
+    "clubs": "🎭 Clubs like Code Club, Music Club, Nature Club are open. Register via the student portal.",
+    "contact": "📞 Call us at +91 422 2635600 or email info@kpriet.ac.in for any queries.",
+    "default": "🤖 Hmm, I’m still learning. Try asking about 'library', 'hostel', 'clubs', or 'placements'."
+  };
+
+  chatbotForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const userMessage = chatbotInput.value.trim();
+    if (!userMessage) return;
+    handleUserInput(userMessage);
+  });
+
+  function sendQuickQuestion(text) {
+    chatbotInput.value = text;
+    chatbotForm.dispatchEvent(new Event('submit'));
+  }
+
+  function handleUserInput(userMessage) {
+    // Show user message
+    chatbotBody.innerHTML += `<div class="chat-message user-message bg-light border rounded p-2 mb-2 ms-auto" style="max-width: 75%;">🙋‍♂️ ${userMessage}</div>`;
+
+    // Match bot response
+    const key = Object.keys(responses).find(k => userMessage.toLowerCase().includes(k));
+    const botReply = responses[key] || responses["default"];
+
+    setTimeout(() => {
+      chatbotBody.innerHTML += `<div class="chat-message bot-message bg-success text-white p-2 rounded mb-2" style="max-width: 75%;">🤖 ${botReply}</div>`;
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }, 500);
+
+    chatbotInput.value = '';
+  }
+
+  
+</script>
